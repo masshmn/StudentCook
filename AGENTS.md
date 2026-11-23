@@ -237,7 +237,7 @@ class RecipeIsPlannedException extends \Exception {}
 - Front : ne jamais utiliser `innerHTML` avec des données utilisateur, toujours `textContent` ou `createElement`.
 
 ## Données de départ
-- **~12 recettes, ~35 ingrédients** dans `database/seed.sql`.
+- **~25 recettes, ~35 ingrédients** dans `database/seed.sql`.
 - Chaque filtre (régime, budget, temps) doit écarter au moins une recette.
 - Vérifier manuellement chaque drapeau et chaque prix avant de valider le seed.
 
