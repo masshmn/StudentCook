@@ -1,0 +1,17 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      TZ: Europe/Paris
+    volumes:
+      # Code monté depuis l'hôte : une modification est visible sans rebuild.
+      - ./backend:/app/backend
+      - ./frontend:/app/frontend
+      - ./database:/app/database
+      # Fichier SQLite dans un volume Docker (jamais dans le dépôt).
+      - db-data:/app/database/data
+
+volumes:
+  db-data:
