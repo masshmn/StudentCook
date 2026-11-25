@@ -84,7 +84,7 @@ CREATE TABLE recipe_ingredients (
     ingredient_id INTEGER NOT NULL,
     quantity INTEGER NOT NULL CHECK(quantity > 0), -- g (kg), mL (L) ou nombre de pièces (unité)
     PRIMARY KEY (recipe_id, ingredient_id),
-    FOREIGN KEY (recipe_id) REFERENCES recipes(id) ON DELETE RESTRICT,
+    FOREIGN KEY (recipe_id) REFERENCES recipes(id) ON DELETE CASCADE,
     FOREIGN KEY (ingredient_id) REFERENCES ingredients(id) ON DELETE RESTRICT
 );
 
@@ -94,6 +94,7 @@ CREATE INDEX idx_recipe_ingredients_ingredient ON recipe_ingredients(ingredient_
 
 **Règles** :
 - Clé primaire composite (une seule quantité par ingrédient par recette) : un doublon dans le formulaire est refusé en 422 **avant** l'INSERT
+- `ON DELETE CASCADE` côté recette (comme `recipe_steps`) : supprimer une recette non planifiée supprime ses lignes d'ingrédients ; une recette planifiée reste protégée par le `RESTRICT` de `meal_planning`. `RESTRICT` côté ingrédient : un ingrédient utilisé ne peut pas être supprimé
 - `ingredient_id` doit exister dans le référentiel : vérifié côté serveur (422 « Ingrédient inconnu. »), la FK garantit le reste
 - Quantités **entières** (0 décimale, décision D5) : g pour `kg`, mL pour `L`, nombre de pièces pour `unité` ; pas de conversion
 - Modification d'une recette : **transaction** pour DELETE puis INSERT des nouveaux ingrédients
