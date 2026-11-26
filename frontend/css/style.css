@@ -1,0 +1,216 @@
+/* Student Cook — styles de base et mise en page.
+   Design system V1 « Cahier » : variables dans tokens.css, composants dans composants.css.
+   Voir docs/DESIGN_SYSTEM.md. */
+
+@import url("tokens.css");
+@import url("composants.css");
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: var(--police-texte);
+    font-size: var(--texte-m);
+    line-height: 1.5;
+    color: var(--encre);
+    background: var(--papier);
+}
+
+h1,
+h2,
+h3 {
+    font-family: var(--police-titre);
+    line-height: 1.15;
+}
+
+h1 {
+    margin-top: 0;
+    font-size: var(--texte-xxl);
+    font-weight: 800;
+}
+
+h2 {
+    font-size: var(--texte-xl);
+}
+
+a {
+    color: var(--tomate-fonce);
+}
+
+a:focus-visible,
+button:focus-visible {
+    outline: var(--focus);
+    outline-offset: 2px;
+}
+
+/* ---------- Mise en page : barre latérale (ordinateur) ---------- */
+body {
+    display: grid;
+    grid-template-columns: var(--largeur-barre) minmax(0, 1fr);
+    min-height: 100vh;
+}
+
+.entete {
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--espace-5);
+    height: 100vh;
+    padding: var(--espace-5) var(--espace-4);
+    border-right: var(--bordure);
+    background: var(--papier);
+}
+
+.logo {
+    font-family: var(--police-titre);
+    font-size: var(--texte-l);
+    font-weight: 800;
+    color: var(--encre);
+    text-decoration: none;
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espace-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.menu a {
+    display: flex;
+    align-items: center;
+    gap: var(--espace-3);
+    padding: var(--espace-2) var(--espace-3);
+    border: 1.5px solid transparent;
+    border-radius: var(--rayon-m);
+    color: var(--encre);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.menu a:hover {
+    border-color: var(--trait);
+}
+
+/* Icône SVG du menu : trait de la couleur du texte (suit l'état actif) */
+.menu__icone {
+    flex: none;
+    width: 1.375rem;
+    height: 1.375rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.menu a.actif {
+    border-color: var(--trait);
+    background: var(--encre);
+    color: var(--papier);
+}
+
+main {
+    width: 100%;
+    max-width: var(--largeur-contenu);
+    padding: var(--espace-6) var(--espace-5);
+}
+
+.a-venir {
+    color: var(--encre-douce);
+    font-style: italic;
+}
+
+/* ---------- Erreurs (utilisées par dom.js) ---------- */
+.bandeau-erreur {
+    margin-bottom: var(--espace-4);
+    padding: var(--espace-3) var(--espace-4);
+    border: var(--bordure);
+    border-color: var(--erreur);
+    border-radius: var(--rayon-m);
+    background: var(--erreur-fond);
+    color: var(--erreur);
+}
+
+.bandeau-erreur p,
+.bandeau-erreur ul {
+    margin: 0;
+}
+
+.erreur-champ {
+    margin: var(--espace-1) 0 0;
+    color: var(--erreur);
+    font-size: var(--texte-s);
+}
+
+[aria-invalid="true"] {
+    border-color: var(--erreur);
+}
+
+/* ---------- Mobile : barre flottante en bas ---------- */
+@media (max-width: 760px) {
+    body {
+        display: block;
+    }
+
+    .entete {
+        position: fixed;
+        top: auto;
+        right: var(--espace-3);
+        bottom: var(--espace-3);
+        left: var(--espace-3);
+        z-index: 10;
+        height: auto;
+        padding: var(--espace-1);
+        border: var(--bordure);
+        border-radius: var(--rayon-l);
+        box-shadow: var(--ombre);
+        background: var(--carte);
+    }
+
+    .logo {
+        display: none;
+    }
+
+    .menu {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .menu li {
+        flex: 1;
+        min-width: 0;
+    }
+
+    /* Icône au-dessus, texte en dessous */
+    .menu a {
+        flex-direction: column;
+        gap: 2px;
+        padding: var(--espace-1);
+        font-size: var(--texte-xs);
+        text-align: center;
+    }
+
+    .menu__texte {
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    main {
+        /* place pour la barre flottante */
+        padding: var(--espace-5) var(--espace-4) 6rem;
+    }
+
+    h1 {
+        font-size: var(--texte-xl);
+    }
+}

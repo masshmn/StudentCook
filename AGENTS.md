@@ -56,6 +56,10 @@ Référence fonctionnelle : `docs/SPEC.md`. N'implémente rien qui n'y figure pa
 
 **⚠️ NE PROPOSE JAMAIS** : Export PDF, import Open Prices, PWA, multi-utilisateurs, calcul nutritionnel (voir `humain/DEPASSEMENT.md` pour la liste complète, mais **interdit de les implémenter**).
 
+## Design system
+- Charte V1 « Cahier » : **lire `docs/DESIGN_SYSTEM.md`** avant de toucher au CSS ou de créer un composant d'interface.
+- Utiliser les variables de `frontend/css/tokens.css` : **ne jamais coder une couleur en dur**.
+
 ## Structure du monorepo
 ```
 student-cook/
@@ -76,7 +80,7 @@ student-cook/
 │       └── Infrastructure/
 │           └── Database.php
 ├── database/           # schema.sql · seed.sql · init.php
-├── docs/               # SPEC.md · MODELE_DONNEES.md · TESTS.md
+├── docs/               # SPEC.md · MODELE_DONNEES.md · TESTS.md · DECISIONS.md · DESIGN_SYSTEM.md
 ├── humain/             # DEPASSEMENT.md · JOURNAL_PROMPTS.md (docs pour humains)
 ├── .github/            # PULL_REQUEST_TEMPLATE.md · ISSUE_TEMPLATE.md
 └── AGENTS.md · CLAUDE.md · README.md · Dockerfile · docker-compose.yml
