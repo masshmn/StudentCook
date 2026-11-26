@@ -39,3 +39,22 @@
 **Choix** : Refus en 409 avec le message « Impossible de supprimer cette recette car elle est planifiée dans un repas. » (`ON DELETE RESTRICT`).
 **Raison** : Évite de vider des créneaux en silence ; l'utilisateur retire d'abord la recette du planning.
 **Écarté** : `ON DELETE CASCADE` sur le planning.
+
+## D7 — Portions par repas (26/11/2026) — version minimale, validée
+
+**Choix** : Chaque repas planifié porte son nombre de portions (`meal_planning.servings`, entier ≥ 1), réglable par − / + dans le planning ; par défaut, celui de la recette. **Seule la liste de courses en tient compte** : `quantité × portions du repas ÷ portions de la recette`.
+**Raison** : Un étudiant seul qui planifie une recette pour 4 achèterait 4 fois trop, contraire à l'objectif « petit prix ». Décidé avant de coder F3/F4 : ajouter la colonne plus tard imposerait de modifier une table déjà remplie et du code déjà écrit.
+**Ce qui ne change pas** (aucune synchronisation) :
+- La recette reste un modèle fixe : ses ingrédients, ses portions et sa fiche détail ne dépendent jamais du planning.
+- Les étapes de préparation ne sont **pas** recalculées (texte libre, impossible à ajuster de façon fiable).
+- Le coût par portion est inchangé (il est déjà ramené à 1 portion).
+**Règle associée** : les étapes **n'écrivent pas de quantités** (« Cuire les pâtes », pas « Cuire 200 g de pâtes ») ; les quantités ne vivent que dans la liste d'ingrédients. S'applique au seed et est rappelée dans le formulaire.
+**Arrondi** : par ingrédient, on somme les quantités exactes (fractions) de tous les repas de la période, puis on arrondit **une seule fois, au supérieur** (on n'achète pas 0,5 œuf). Le coût est calculé sur la quantité exacte et arrondi une seule fois, au total.
+**Écarté** : Toujours compter la recette entière (liste fausse pour un étudiant seul) ; recalculer les étapes ou la fiche recette (fragile, sans gain pour la liste) ; arrondir repas par repas (arrondis cumulés) ; reporter en V2 (coût de migration plus élevé une fois F3/F4 codés).
+
+## D8 — Design system V1 « Cahier » (26/11/2026)
+
+**Choix** : Charte « cahier d'étudiant » (papier `#F6F3EC`, encre `#171512`, tomate `#E8452C`, beurre `#FFD45C`, traits 1,5 px, ombre décalée) en CSS natif : `tokens.css` (variables), `composants.css`, `style.css`. Documentation : `docs/DESIGN_SYSTEM.md`.
+**Raison** : Identité visuelle cohérente sur les 4 écrans, sans dépendance ni build ; une seule source de vérité pour les couleurs.
+**Polices** : système par défaut ; Bricolage Grotesque et DM Sans (OFL) prévues en fichiers locaux, jamais via Google Fonts (pas d'appel réseau externe).
+**Écarté** : Framework CSS (Tailwind, Bootstrap), préprocesseur (Sass), polices en ligne.

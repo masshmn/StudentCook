@@ -1,12 +1,14 @@
 # Cas de test — Student Cook
 
-> 10 cas à vérifier manuellement avant la soutenance : 6 normaux, 3 limites, 1 piège.
+> 11 cas à vérifier manuellement avant la soutenance : 7 normaux, 3 limites, 1 piège.
 > **Ces cas sont figés avant de coder. Toute modification doit être justifiée et versionnée.**
 >
 > **v2.1 (15/11/2026)** — alignement sur SPEC v2.1 :
 > - CL1 et CP1 remplacés : ils testaient la création/suppression d'ingrédients, retirée du périmètre (référentiel fixe).
 > - Tests indépendants : chacun se joue sur une base réinitialisée ; CN4, CL2 et CP1 utilisent les recettes du seed « Pâtes au pesto » et « Salade de pâtes » au lieu de la recette créée en CN1.
 > - CN1 : ingrédients choisis dans une liste. CN2 : ajout du filtre halal. CN4 : listes jour/semaine/mois. CN6 : vues jour/mois.
+>
+> **v2.2 (26/11/2026)** — ajout de CN7 (portions par repas), justifié par la décision D7.
 
 ---
 
@@ -124,6 +126,25 @@
 
 ---
 
+### CN7 — Portions d'un repas et liste de courses (D7)
+
+**Pré-requis** : Base réinitialisée (planning vide). Recette du seed « Pâtes au pesto » (2 portions, 200g pâtes).
+
+**Actions** :
+1. Planifier « Pâtes au pesto » aujourd'hui au Midi : le compteur affiche 2 portions
+2. Cliquer sur − : le compteur passe à 1, le bouton − devient inactif
+3. Rafraîchir la page
+4. Aller sur la Liste de courses, « Aujourd'hui »
+5. Via `curl`, envoyer `servings: 0` pour ce repas
+
+**Résultat attendu** :
+- Étape 3 : le repas affiche toujours 1 portion (persisté)
+- Étape 4 : pâtes 100g (200 × 1 / 2), coût divisé par 2
+- Étape 5 : code 422, message en français, valeur en base inchangée
+- La fiche de « Pâtes au pesto » affiche toujours 2 portions et 200g de pâtes (la recette n'est pas modifiée)
+
+---
+
 ## Cas limites (3)
 
 ### CL1 — Envoyer à l'API un ingrédient hors référentiel
@@ -193,7 +214,7 @@
 ## Checklist de vérification finale
 
 Avant la soutenance, vérifier que :
-- [ ] Les 10 cas passent sur une base réinitialisée (`php database/init.php --reset`)
+- [ ] Les 11 cas passent sur une base réinitialisée (`php database/init.php --reset`)
 - [ ] Tous les messages d'erreur sont en français
 - [ ] Les montants sont affichés en euros avec 2 décimales
 - [ ] Les codes HTTP sont corrects (422, 404, 409)
