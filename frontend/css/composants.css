@@ -177,6 +177,10 @@ button.puce[aria-pressed="true"]::before {
     background: var(--carte);
 }
 
+.boite + .boite {
+    margin-top: var(--espace-4);
+}
+
 .boite--ombre {
     box-shadow: var(--ombre);
 }

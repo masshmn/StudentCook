@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use StudentCook\Domain\Exceptions\AppException;
 use StudentCook\Http\Controllers\ErrorController;
+use StudentCook\Http\Controllers\RecipeController;
 
 require dirname(__DIR__) . '/bootstrap.php';
 
@@ -14,6 +15,8 @@ require dirname(__DIR__) . '/bootstrap.php';
  * Exemple : ['GET', '/api/recipes/{id}', RecipeController::class, 'show'],
  */
 const API_ROUTES = [
+    ['GET', '/api/recipes', RecipeController::class, 'index'],
+    ['GET', '/api/recipes/{id}', RecipeController::class, 'show'],
 ];
 
 const JSON_BODY_METHODS = ['POST', 'PUT', 'PATCH'];
