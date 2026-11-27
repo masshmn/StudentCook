@@ -60,7 +60,7 @@ Les ingrédients forment un **référentiel fixe** fourni par `database/seed.sql
 **Écran détail** :
 - Tous les champs ci-dessus
 - Liste des ingrédients avec quantités
-- Étapes de préparation (texte libre)
+- Étapes de préparation (texte libre, **sans quantités** : elles restent dans la liste d'ingrédients — D7)
 
 **Actions** :
 - Créer une recette complète (nom, temps, portions, régimes, ingrédients, étapes)
@@ -132,6 +132,7 @@ Chaque repas planifié est rattaché à une **date** (AAAA-MM-JJ) et à un **cr�
 **Actions** (dans les trois vues) :
 - Assigner une recette à un créneau via un **menu déroulant** (drag & drop prévu en V2)
 - Retirer une recette d'un créneau
+- Régler le nombre de portions du repas (− / +, minimum 1) ; par défaut, celui de la recette (D7)
 - Voir le détail d'une recette depuis le planning
 
 **Critères d'acceptation** :
@@ -143,6 +144,7 @@ Chaque repas planifié est rattaché à une **date** (AAAA-MM-JJ) et à un **cr�
 - [ ] Je peux retirer une recette d'un créneau
 - [ ] Les modifications sont persistées en base
 - [ ] Les créneaux vides sont clairement identifiables
+- [ ] Le nombre de portions d'un repas est modifiable, persisté, et refusé s'il n'est pas un entier ≥ 1 (422)
 
 **Hors périmètre** : Drag & drop (V2), copier/coller de semaine ou de jour, historique des plannings, vue année.
 
@@ -160,6 +162,7 @@ Chaque repas planifié est rattaché à une **date** (AAAA-MM-JJ) et à un **cr�
   - **Semaine courante** : du lundi au dimanche de la semaine en cours — **choix par défaut**
   - **Mois courant** : du 1er au dernier jour du mois en cours
 - Agrégation des quantités par ingrédient
+- Quantités ajustées aux portions de chaque repas (voir § 4 « Portions par repas », D7)
 - Organisation par rayon
 - Calcul du coût total
 
@@ -178,6 +181,7 @@ Chaque repas planifié est rattaché à une **date** (AAAA-MM-JJ) et à un **cr�
 
 **Critères d'acceptation** :
 - [ ] La liste agrège correctement les quantités (ex : 2× 200g tomates = 400g)
+- [ ] Une recette pour 2 planifiée pour 1 portion compte ses quantités divisées par 2
 - [ ] Je peux générer la liste du jour, de la semaine et du mois courants
 - [ ] Seuls les repas dont la date est dans la période choisie sont comptés (bornes incluses)
 - [ ] Les ingrédients sont groupés par rayon
@@ -214,6 +218,17 @@ Coût total (centimes) = Σ coût des lignes
 Coût par portion (centimes) = Coût total / nombre_portions
 Affichage (euros) = arrondi(Coût par portion / 100, 2 décimales)
 ```
+
+### Portions par repas (D7)
+```
+Quantité d'un repas (exacte) = quantité recette × portions du repas / portions de la recette
+Quantité affichée (par ingrédient) = arrondi SUPÉRIEUR( Σ quantités exactes des repas de la période )
+Coût d'une ligne = calculé sur la Σ exacte (même formule que ci-dessus)
+Coût total (centimes) = arrondi( Σ coûts des lignes ) — une seule fois, au résultat final
+```
+Exemple : recette pour 4 avec 200 g de pâtes, planifiée pour 1 → 50 g ; deux repas de 1 portion → 100 g.
+
+Les portions d'un repas n'affectent **que** la liste de courses : la recette, sa fiche détail, ses étapes et son coût par portion restent inchangés.
 
 ### Jours, créneaux et périodes
 - Jours : Lundi, Mardi, Mercredi, Jeudi, Vendredi, Samedi, Dimanche (le jour de la semaine se déduit de la date)
@@ -258,6 +273,7 @@ Fichier `database/seed.sql` avec :
   - Au moins 1 recette **non** halal (ex : lardons, vin) pour que le filtre écarte quelque chose
   - Au moins 1 recette écartée par chaque filtre (budget, temps, régime)
   - Prix réalistes pour un étudiant (1€ à 5€ par portion)
+  - Étapes rédigées sans quantités (« Cuire les pâtes », pas « Cuire 200 g de pâtes ») — D7
   - Recettes imposées par `TESTS.md` (CN4, CL2, CP1) : « Pâtes au pesto » (200g de pâtes) et « Salade de pâtes » (150g de pâtes)
   - **Pas** de « Pâtes carbonara » (créée par le test CN1, le nom doit être libre)
 

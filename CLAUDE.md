@@ -12,7 +12,7 @@
 - **AGENTS.md** : contexte principal (stack, archi, règles, pièges)
 - **docs/SPEC.md** : fonctionnalités F0-F4, critères d'acceptation, hors périmètre
 - **docs/MODELE_DONNEES.md** : schéma SQL, contraintes, requêtes importantes
-- **docs/TESTS.md** : 10 cas de test manuels (6 normaux, 3 limites, 1 piège)
+- **docs/TESTS.md** : 11 cas de test manuels (7 normaux, 3 limites, 1 piège)
 
 ### Règles strictes
 - **Git** : Ne fais JAMAIS `git commit` ni `git push`. Nous relisons et commitons nous-mêmes.

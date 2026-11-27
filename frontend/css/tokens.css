@@ -1,0 +1,94 @@
+/* Student Cook — design system V1 « Cahier » : variables (tokens).
+   Règle : aucune couleur codée en dur ailleurs que dans ce fichier.
+   Voir docs/DESIGN_SYSTEM.md. */
+
+/* Polices de la maquette (licence OFL) : déposer les .woff2 dans frontend/fonts/
+   puis décommenter. Laissé commenté pour éviter des 404 en console tant que
+   les fichiers sont absents. Aucun appel réseau externe (pas de Google Fonts).
+
+@font-face {
+    font-family: "Bricolage Grotesque";
+    src: url("../fonts/BricolageGrotesque.woff2") format("woff2");
+    font-weight: 400 800;
+    font-display: swap;
+}
+@font-face {
+    font-family: "DM Sans";
+    src: url("../fonts/DMSans.woff2") format("woff2");
+    font-weight: 400 700;
+    font-display: swap;
+}
+*/
+
+:root {
+    /* Couleurs de base */
+    --papier: #F6F3EC;
+    --papier-fonce: #ECE7DB;
+    --carte: #FFFDF8;
+    --encre: #171512;
+    --encre-douce: #5C574F;      /* texte secondaire, contraste ≥ 4,5:1 sur papier */
+    --trait: #171512;            /* bordures « cahier » */
+    --trait-doux: #D9D2C3;
+
+    --tomate: #E8452C;           /* fonds et accents ; texte encre dessus */
+    --tomate-fonce: #B3311B;     /* texte tomate sur papier (contraste ≥ 4,5:1) */
+    --beurre: #FFD45C;           /* prix, surlignage */
+    --beurre-clair: #FFF1C2;
+
+    --succes: #2E6B3F;
+    --succes-fond: #E3F1E6;
+    --erreur: #A8261A;
+    --erreur-fond: #FCE8E4;
+
+    /* Régimes (fond pastel, texte encre) */
+    --regime-vegetarien: #CDE8C4;
+    --regime-vegan: #A9D9A0;
+    --regime-sans-gluten: #F6DDB0;
+    --regime-halal: #C9DDF2;
+
+    /* Rayons (pastille / liseré) */
+    --rayon-fruits-legumes: #7DBF6A;
+    --rayon-epicerie: #E0A84A;
+    --rayon-frais: #6FAFD8;
+    --rayon-surgeles: #A9C7E8;
+    --rayon-viandes-poissons: #E07A6A;
+    --rayon-autres: #B7AFA2;
+
+    /* Typographie */
+    --police-titre: "Bricolage Grotesque", ui-rounded, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --police-texte: "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --police-chiffres: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+    --texte-xs: 0.75rem;
+    --texte-s: 0.875rem;
+    --texte-m: 1rem;
+    --texte-l: 1.25rem;
+    --texte-xl: 1.75rem;
+    --texte-xxl: 2.25rem;
+
+    /* Espacements (échelle de 4 px) */
+    --espace-1: 0.25rem;
+    --espace-2: 0.5rem;
+    --espace-3: 0.75rem;
+    --espace-4: 1rem;
+    --espace-5: 1.5rem;
+    --espace-6: 2rem;
+    --espace-7: 3rem;
+
+    /* Formes */
+    --rayon-s: 6px;
+    --rayon-m: 10px;
+    --rayon-l: 16px;
+    --rayon-rond: 999px;
+    --bordure: 1.5px solid var(--trait);
+    --bordure-douce: 1.5px solid var(--trait-doux);
+    --ombre: 3px 3px 0 var(--encre);   /* ombre « décalée » façon cahier */
+
+    --focus: 3px solid var(--tomate-fonce);
+
+    /* Mise en page */
+    --largeur-barre: 220px;
+    --largeur-contenu: 960px;
+    /* Point de rupture unique : 760px (les media queries ne lisent pas les variables,
+       la valeur est répétée dans composants.css et style.css). */
+}
