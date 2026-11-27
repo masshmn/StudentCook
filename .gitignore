@@ -41,7 +41,6 @@ yarn-error.log*
 
 # Docker (volumes et fichiers temporaires)
 docker-compose.override.yml
-.dockerignore
 
 # PHP (pas de Composer dans ce projet, mais au cas où)
 vendor/

@@ -2,26 +2,10 @@
 
 declare(strict_types=1);
 
+use StudentCook\Domain\Exceptions\AppException;
 use StudentCook\Http\Controllers\ErrorController;
 
-// Aucune erreur PHP ni stack trace ne doit atteindre le client : on journalise seulement.
-ini_set('display_errors', '0');
-ini_set('log_errors', '1');
-error_reporting(E_ALL);
-date_default_timezone_set('Europe/Paris');
-
-// Autoload PSR-4 maison : StudentCook\X\Y → backend/src/X/Y.php
-spl_autoload_register(function (string $className): void {
-    $prefix = 'StudentCook\\';
-    if (!str_starts_with($className, $prefix)) {
-        return;
-    }
-    $relativePath = str_replace('\\', '/', substr($className, strlen($prefix)));
-    $filePath = dirname(__DIR__) . '/src/' . $relativePath . '.php';
-    if (is_file($filePath)) {
-        require $filePath;
-    }
-});
+require dirname(__DIR__) . '/bootstrap.php';
 
 /*
  * Table des routes API : [méthode HTTP, chemin, Controller, méthode du Controller].
@@ -38,13 +22,6 @@ const STATIC_MIME_TYPES = [
     'html' => 'text/html; charset=utf-8',
     'css'  => 'text/css; charset=utf-8',
     'js'   => 'text/javascript; charset=utf-8',
-    'json' => 'application/json; charset=utf-8',
-    'svg'  => 'image/svg+xml',
-    'png'  => 'image/png',
-    'jpg'  => 'image/jpeg',
-    'jpeg' => 'image/jpeg',
-    'webp' => 'image/webp',
-    'ico'  => 'image/x-icon',
 ];
 
 function routePatternToRegex(string $routePath): string
@@ -53,7 +30,7 @@ function routePatternToRegex(string $routePath): string
     return '#^' . str_replace(preg_quote('{id}', '#'), '([1-9][0-9]{0,17})', $escapedPath) . '$#';
 }
 
-// Renvoie le corps décodé, ou null s'il n'est pas un objet JSON valide.
+/** @return array<string, mixed>|null null si le corps n'est pas un objet JSON valide */
 function readJsonObjectBody(): ?array
 {
     $rawBody = file_get_contents('php://input');
@@ -100,7 +77,10 @@ function serveFrontend(string $requestPath): void
 {
     $frontendRoot = realpath(dirname(__DIR__, 2) . '/frontend');
     $relativePath = ltrim($requestPath, '/');
-    $requestedFile = realpath($frontendRoot . '/' . ($relativePath === '' ? 'index.html' : $relativePath));
+    // Un octet NUL (%00) ferait lever une ValueError à realpath() : 404 directement.
+    $requestedFile = str_contains($relativePath, "\0")
+        ? false
+        : realpath($frontendRoot . '/' . ($relativePath === '' ? 'index.html' : $relativePath));
 
     // Fichier absent ou hors du dossier frontend/ (ex : /../backend/...) : 404.
     if (
@@ -119,10 +99,12 @@ function serveFrontend(string $requestPath): void
     readfile($requestedFile);
 }
 
-$isApiRequest = false;
+$httpMethod = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
+$requestPath = rawurldecode(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/');
+$isApiRequest = $requestPath === '/api' || str_starts_with($requestPath, '/api/');
 
 // Erreur fatale (hors exception) : réponse JSON générique au lieu d'une page vide.
-register_shutdown_function(function () use (&$isApiRequest): void {
+register_shutdown_function(function () use ($isApiRequest): void {
     $lastError = error_get_last();
     $fatalTypes = E_ERROR | E_PARSE | E_CORE_ERROR | E_COMPILE_ERROR;
     if ($isApiRequest && $lastError !== null && ($lastError['type'] & $fatalTypes) && !headers_sent()) {
@@ -130,15 +112,16 @@ register_shutdown_function(function () use (&$isApiRequest): void {
     }
 });
 
-$httpMethod = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
-$requestPath = rawurldecode(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/');
-$isApiRequest = $requestPath === '/api' || str_starts_with($requestPath, '/api/');
-
 try {
     if ($isApiRequest) {
         dispatchApi($httpMethod, $requestPath);
     } else {
         serveFrontend($requestPath);
+    }
+} catch (AppException $exception) {
+    // Exception métier (422 / 404 / 409) : les Controllers n'ont pas de try/catch à écrire.
+    if (!headers_sent()) {
+        (new ErrorController())->appError($exception);
     }
 } catch (Throwable $exception) {
     error_log((string) $exception);

@@ -2,9 +2,6 @@
    Design system V1 « Cahier » : variables dans tokens.css, composants dans composants.css.
    Voir docs/DESIGN_SYSTEM.md. */
 
-@import url("tokens.css");
-@import url("composants.css");
-
 *,
 *::before,
 *::after {
@@ -18,6 +15,10 @@ body {
     line-height: 1.5;
     color: var(--encre);
     background: var(--papier);
+    /* Mise en page : barre latérale (ordinateur) */
+    display: grid;
+    grid-template-columns: var(--largeur-barre) minmax(0, 1fr);
+    min-height: 100vh;
 }
 
 h1,
@@ -48,12 +49,6 @@ button:focus-visible {
 }
 
 /* ---------- Mise en page : barre latérale (ordinateur) ---------- */
-body {
-    display: grid;
-    grid-template-columns: var(--largeur-barre) minmax(0, 1fr);
-    min-height: 100vh;
-}
-
 .entete {
     position: sticky;
     top: 0;
@@ -111,7 +106,7 @@ body {
     stroke-linejoin: round;
 }
 
-.menu a.actif {
+.menu a[aria-current="page"] {
     border-color: var(--trait);
     background: var(--encre);
     color: var(--papier);
@@ -128,21 +123,6 @@ main {
     font-style: italic;
 }
 
-/* ---------- Erreurs (utilisées par dom.js) ---------- */
-.bandeau-erreur {
-    margin-bottom: var(--espace-4);
-    padding: var(--espace-3) var(--espace-4);
-    border: var(--bordure);
-    border-color: var(--erreur);
-    border-radius: var(--rayon-m);
-    background: var(--erreur-fond);
-    color: var(--erreur);
-}
-
-.bandeau-erreur p,
-.bandeau-erreur ul {
-    margin: 0;
-}
 
 .erreur-champ {
     margin: var(--espace-1) 0 0;

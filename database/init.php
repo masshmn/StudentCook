@@ -15,21 +15,17 @@ declare(strict_types=1);
 
 use StudentCook\Infrastructure\Database;
 
-require_once dirname(__DIR__) . '/backend/src/Infrastructure/Database.php';
-
-date_default_timezone_set('Europe/Paris');
+require dirname(__DIR__) . '/backend/bootstrap.php';
 
 $isReset = in_array('--reset', array_slice($argv, 1), true);
 $databasePath = Database::getPath();
 
-// 1. Le dossier database/data/ doit exister (il est monté en volume par Docker).
 $dataDirectory = dirname($databasePath);
 if (!is_dir($dataDirectory) && !mkdir($dataDirectory, 0775, true)) {
     fwrite(STDERR, "ERREUR : impossible de créer le dossier $dataDirectory.\n");
     exit(1);
 }
 
-// 2. --reset : on repart d'un fichier vierge.
 if ($isReset && file_exists($databasePath)) {
     if (!unlink($databasePath)) {
         fwrite(STDERR, "ERREUR : impossible de supprimer $databasePath.\n");
@@ -44,7 +40,6 @@ $isNewFile = !file_exists($databasePath);
 try {
     $pdo = Database::getConnection();
 
-    // 3. Sans --reset, une base déjà initialisée n'est pas modifiée.
     $tableCount = (int) $pdo->query(
         "SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name = 'recipes'"
     )->fetchColumn();
@@ -54,8 +49,7 @@ try {
         exit(0);
     }
 
-    // 4. Schéma + données de départ dans une seule transaction :
-    //    soit tout est créé, soit rien.
+    // Une seule transaction : soit tout est créé, soit rien.
     $pdo->beginTransaction();
     foreach (['schema.sql', 'seed.sql'] as $sqlFile) {
         $sql = file_get_contents(__DIR__ . '/' . $sqlFile);
@@ -66,7 +60,7 @@ try {
     }
     $pdo->commit();
 
-    // 5. Vérification : le seed n'a créé aucune ligne qui viole une clé étrangère.
+    // Filet de sécurité : le seed ne doit référencer aucun id inexistant.
     $foreignKeyErrors = $pdo->query('PRAGMA foreign_key_check')->fetchAll();
     if ($foreignKeyErrors !== []) {
         throw new RuntimeException('le seed contient des références invalides (PRAGMA foreign_key_check).');
