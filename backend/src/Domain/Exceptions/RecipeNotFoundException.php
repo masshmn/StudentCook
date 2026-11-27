@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace StudentCook\Domain\Exceptions;
 
-class RecipeNotFoundException extends \Exception
+class RecipeNotFoundException extends AppException
 {
-    public function __construct(string $message = 'Recette introuvable.')
+    public function __construct()
     {
-        parent::__construct($message);
+        parent::__construct(['recette' => 'Recette introuvable.']);
     }
 }

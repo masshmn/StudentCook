@@ -66,6 +66,7 @@ student-cook/
 ├── frontend/           # index.html · css/ · js/
 │   └── js/             # app.js · router.js · api.js · dom.js · views/
 ├── backend/
+│   ├── bootstrap.php   # amorçage commun : autoload, fuseau, réglages d'erreurs
 │   ├── public/         # index.php (point d'entrée)
 │   └── src/
 │       ├── Http/
@@ -82,7 +83,7 @@ student-cook/
 ├── database/           # schema.sql · seed.sql · init.php
 ├── docs/               # SPEC.md · MODELE_DONNEES.md · TESTS.md · DECISIONS.md · DESIGN_SYSTEM.md
 ├── humain/             # DEPASSEMENT.md · JOURNAL_PROMPTS.md (docs pour humains)
-├── .github/            # PULL_REQUEST_TEMPLATE.md · ISSUE_TEMPLATE.md
+├── .github/            # PULL_REQUEST_TEMPLATE.md
 └── AGENTS.md · CLAUDE.md · README.md · Dockerfile · docker-compose.yml
 ```
 
@@ -177,21 +178,22 @@ abstract class AbstractRepository {
 
 ### Exceptions métier (`Domain/Exceptions/`)
 
-Pour gérer les erreurs métier avec les bons codes HTTP.
+Toutes héritent de `AppException`, qui porte ses erreurs au format de l'API (`['champ' => 'message']`).
 
 ```php
 <?php
 namespace StudentCook\Domain\Exceptions;
 
-class RecipeNotFoundException extends \Exception {}
-class RecipeIsPlannedException extends \Exception {}
+abstract class AppException extends \Exception { /* getErrors(): array<string, string> */ }
+class ValidationException extends AppException {}          // 422
+class RecipeNotFoundException extends AppException { … }   // 404, champ « recette »
+class RecipeIsPlannedException extends AppException { … }  // 409, message de D6
 ```
 
 **Usage** :
-- Repository lance `throw new RecipeNotFoundException()` si `findById()` ne trouve rien
-- Controller attrape avec `try/catch` et retourne `$this->jsonError(['recette' => 'Recette introuvable.'], 404)`
-- Service lance `RecipeIsPlannedException` si on tente de supprimer une recette planifiée
-- Controller attrape et retourne code 409
+- Validation, Service ou Repository **lancent** l'exception ; **aucun Controller n'écrit de `try/catch`**.
+- Le `catch (AppException)` de `public/index.php` la traduit une seule fois, via `ErrorController::appError()`.
+- Le code HTTP de chaque exception est défini à un seul endroit : `ErrorController::STATUS_BY_EXCEPTION`. Une nouvelle exception métier = une classe + une ligne dans cette table.
 
 ---
 
@@ -206,6 +208,39 @@ class RecipeIsPlannedException extends \Exception {}
 | Supprimer | `delete(int $id)` | `bool` |
 
 **Règle** : toujours `prepare()` + `execute()` avec des paramètres nommés (`:id`, `:name`, etc.).
+
+## Règles de code
+
+### Principes
+- **KISS** : la solution la plus simple et directe qui répond à la SPEC ; pas de construction « au cas où ».
+- **DRY** : une règle, une valeur ou un message n'existe qu'à un seul endroit (ex. fuseau dans `backend/bootstrap.php`, codes HTTP dans `ErrorController`) ; sinon, une fonction ou un module partagé.
+- **YAGNI** : n'ajoute rien sans besoin immédiat (fonction, option, paramètre, fichier). Le périmètre est celui de `docs/SPEC.md`.
+- **Séparation des responsabilités** : voir « Architecture en couches » (SQL dans les Repositories, métier dans les Services, HTTP dans les Controllers, DOM dans les vues).
+
+### Conventions et portée
+- Respecte strictement l'architecture et les conventions **du code existant**. Si la documentation contredit le code sur une **convention de code**, suis le code et signale l'incohérence à la fin de ta réponse. Pour le **comportement fonctionnel**, `docs/SPEC.md` et `docs/DECISIONS.md` font foi : signale l'écart au lieu de le reproduire.
+- Ne modifie que les fichiers liés à la demande. Pas de refactorisation globale sans accord préalable.
+
+### Lisibilité et style
+- **Nommage explicite**, une seule langue par couche (convention existante) : **anglais** en PHP et SQL, **français** en JS et CSS. Ne mélange jamais les deux dans un même fichier. Portée des variables limitée au strict nécessaire.
+- **Formatage constant** : PSR-12 en PHP (4 espaces), même style en JS ; pas d'imbrication profonde (retour anticipé).
+- **Commentaires utiles** : explique le *pourquoi* (choix, contrainte, piège, décision Dx), jamais une paraphrase du code. Pas de commentaire s'il n'apporte rien.
+
+### Typage
+- PHP : `declare(strict_types=1);` en tête de chaque fichier ; types sur **tous** les paramètres, retours et propriétés. `mixed` est interdit, sauf s'il est réellement inévitable (seul cas actuel : `AbstractController::json()`). Le contenu des tableaux est précisé en PHPDoc (`@param array<string, string> $errors`).
+- JS (pas de TypeScript, pas de build) : comparaisons strictes (`===`), aucune conversion implicite, JSDoc sur les fonctions exportées.
+
+### Fiabilité et sécurité
+- Valide toute donnée reçue (Http/Validation) et traite explicitement les erreurs et les cas limites (vide, zéro, négatif, id inexistant, format invalide). Les erreurs métier passent par `AppException` (voir plus haut).
+- Ne mets jamais de secret, de clé API ni d'identifiant en dur. S'il en faut un, lis-le avec `getenv()` et documente-le dans un `.env.example` (jamais de `.env` réel).
+- Références : OWASP pour la sécurité web (XSS, injection SQL, traversée de chemin), recommandations de l'ANSSI.
+
+### Vérification avant de conclure
+Aucun linter ni test automatisé n'est installé (zéro dépendance). Le minimum avant de conclure :
+1. `php -l` sur chaque fichier PHP modifié, `node --check` sur chaque fichier JS modifié.
+2. Si `schema.sql` ou `seed.sql` change : les exécuter sur une base en mémoire et vérifier `PRAGMA foreign_key_check`. Ne lance jamais `init.php --reset` sur la base de l'utilisateur sans son accord.
+3. Lancer le serveur et tester les routes touchées (`curl`).
+4. Lister les cas de `docs/TESTS.md` à vérifier manuellement, et dire honnêtement ce qui n'a pas été testé.
 
 ## Règles strictes
 

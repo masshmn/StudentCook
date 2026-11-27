@@ -1,4 +1,3 @@
-// Point d'entrée : déclare les routes et démarre le routeur.
 import { demarrerRouteur } from './router.js';
 import * as recettesView from './views/recettesView.js';
 import * as recetteDetailView from './views/recetteDetailView.js';

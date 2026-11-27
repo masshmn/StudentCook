@@ -13,7 +13,7 @@ abstract class AbstractRepository
 
     public function __construct()
     {
-        // Database::getConnection() active PRAGMA foreign_keys = ON (ticket #4).
+        // getConnection() active PRAGMA foreign_keys = ON.
         $this->pdo = Database::getConnection();
     }
 }

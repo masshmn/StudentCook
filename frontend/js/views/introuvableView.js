@@ -1,6 +1,6 @@
-// Écran « Page introuvable » pour tout hash qui ne correspond à aucune route.
 import { el } from '../dom.js';
 
+/** @param {HTMLElement} conteneur */
 export function afficher(conteneur) {
     conteneur.append(
         el('h1', {}, 'Page introuvable'),

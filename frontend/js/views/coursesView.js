@@ -1,6 +1,6 @@
-// Écran Liste de courses (F4) — à venir.
 import { el } from '../dom.js';
 
+/** @param {HTMLElement} conteneur */
 export function afficher(conteneur) {
     conteneur.append(
         el('h1', {}, 'Liste de courses'),

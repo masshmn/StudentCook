@@ -3,8 +3,6 @@ services:
     build: .
     ports:
       - "8000:8000"
-    environment:
-      TZ: Europe/Paris
     volumes:
       # Code monté depuis l'hôte : une modification est visible sans rebuild.
       - ./backend:/app/backend

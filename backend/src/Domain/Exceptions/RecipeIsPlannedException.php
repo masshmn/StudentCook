@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace StudentCook\Domain\Exceptions;
 
-class RecipeIsPlannedException extends \Exception
+// Message imposé par D6 et vérifié par le test CL2.
+class RecipeIsPlannedException extends AppException
 {
-    public function __construct(string $message = 'Cette recette est planifiée : retirez-la du planning avant de la supprimer.')
+    public function __construct()
     {
-        parent::__construct($message);
+        parent::__construct(['recette' => 'Impossible de supprimer cette recette car elle est planifiée dans un repas.']);
     }
 }

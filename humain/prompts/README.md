@@ -17,7 +17,7 @@ Issue GitHub
    ├─ 03 Implémentation         → couche par couche, `php -l` après chaque fichier PHP
    ├─ 06 Cas de test            → compléter si l'issue n'a pas de cas dans docs/TESTS.md
    ├─ 04 Revue adverse          → avant d'ouvrir la PR
-   └─ Journal                   → une entrée dans JOURNAL_PROMPTS.md
+   └─ Journal                   → une ligne au tableau de suivi (+ entrée si issue)
 ```
 
 Prompts « à la demande », hors cycle :
@@ -105,7 +105,14 @@ Un prompt qui a bien marché plusieurs fois ? Proposez-le comme nouveau template
 
 ## 5. Tenir le journal
 
-Après chaque usage significatif de l'IA, ajouter une entrée dans `../JOURNAL_PROMPTS.md` (fichier local, non versionné) :
+Le journal `../JOURNAL_PROMPTS.md` (fichier local, non versionné) a deux niveaux :
+
+1. **Tableau de suivi des sessions**, en haut du fichier : **une ligne par session IA**, ajoutée à la fin de la session (Claude le fait lui-même, voir `CLAUDE.md`).
+
+| Date | Session · branche | Intention | Prompt clé | Verdict | Ce qu'on a corrigé / à retenir | Réf. |
+|---|---|---|---|---|---|---|
+
+2. **Entrée détaillée**, seulement pour une issue ou une décision importante (la colonne Réf. du tableau pointe vers elle) :
 
 ```markdown
 ## Entrée #N — [Titre] ([date])
@@ -113,7 +120,7 @@ Après chaque usage significatif de l'IA, ajouter une entrée dans `../JOURNAL_P
 **Intention** : ce qu'on voulait obtenir
 **Prompts utilisés** : les formulations exactes (copier-coller)
 **Gardé / modifié / refusé** : ce qu'on a accepté de la réponse, et pourquoi
-**Verdict** : ✅ validé / ⚠️ partiel / ❌ abandonné
+**Verdict** : ✅ validé / ⏳ en attente / 🔁 refait ou corrigé / ❌ abandonné
 **Améliorations du prompt** : ce qu'on écrirait autrement la prochaine fois
 ```
 

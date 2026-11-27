@@ -12,7 +12,7 @@
 
 ---
 
-## Cas normaux (6)
+## Cas normaux (7)
 
 ### CN1 — Créer une recette complète et la voir dans le catalogue
 
@@ -128,10 +128,10 @@
 
 ### CN7 — Portions d'un repas et liste de courses (D7)
 
-**Pré-requis** : Base réinitialisée (planning vide). Recette du seed « Pâtes au pesto » (2 portions, 200g pâtes).
+**Pré-requis** : Base réinitialisée (planning vide). Recette du seed « Salade de pâtes » (2 portions, 150g pâtes).
 
 **Actions** :
-1. Planifier « Pâtes au pesto » aujourd'hui au Midi : le compteur affiche 2 portions
+1. Planifier « Salade de pâtes » aujourd'hui au Midi : le compteur affiche 2 portions
 2. Cliquer sur − : le compteur passe à 1, le bouton − devient inactif
 3. Rafraîchir la page
 4. Aller sur la Liste de courses, « Aujourd'hui »
@@ -139,9 +139,9 @@
 
 **Résultat attendu** :
 - Étape 3 : le repas affiche toujours 1 portion (persisté)
-- Étape 4 : pâtes 100g (200 × 1 / 2), coût divisé par 2
+- Étape 4 : pâtes 75g (150 × 1 / 2), coût divisé par 2
 - Étape 5 : code 422, message en français, valeur en base inchangée
-- La fiche de « Pâtes au pesto » affiche toujours 2 portions et 200g de pâtes (la recette n'est pas modifiée)
+- La fiche de « Salade de pâtes » affiche toujours 2 portions et 150g de pâtes (la recette n'est pas modifiée)
 
 ---
 

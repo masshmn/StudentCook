@@ -88,7 +88,7 @@ CREATE TABLE recipe_ingredients (
     FOREIGN KEY (ingredient_id) REFERENCES ingredients(id) ON DELETE RESTRICT
 );
 
-CREATE INDEX idx_recipe_ingredients_recipe ON recipe_ingredients(recipe_id);
+-- Pas d'index sur recipe_id : la clé primaire (recipe_id, ingredient_id) le couvre déjà.
 CREATE INDEX idx_recipe_ingredients_ingredient ON recipe_ingredients(ingredient_id);
 ```
 
@@ -115,7 +115,7 @@ CREATE TABLE recipe_steps (
     FOREIGN KEY (recipe_id) REFERENCES recipes(id) ON DELETE CASCADE
 );
 
-CREATE INDEX idx_recipe_steps_recipe ON recipe_steps(recipe_id);
+-- Pas d'index sur recipe_id : UNIQUE (recipe_id, step_number) le couvre déjà.
 ```
 
 **Règles** :
@@ -140,7 +140,7 @@ CREATE TABLE meal_planning (
     FOREIGN KEY (recipe_id) REFERENCES recipes(id) ON DELETE RESTRICT
 );
 
-CREATE INDEX idx_meal_planning_date ON meal_planning(meal_date);
+-- Pas d'index sur meal_date : UNIQUE (meal_date, meal_slot) le couvre déjà.
 CREATE INDEX idx_meal_planning_recipe ON meal_planning(recipe_id);
 ```
 

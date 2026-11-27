@@ -1,14 +1,18 @@
 // Seul fichier du front autorisé à appeler fetch.
-// Succès : renvoie le JSON (null si 204). Échec : lève ApiError { status, erreurs }.
 
 const PREFIXE = '/api';
 
+/** Erreur d'appel à l'API : le front affiche `erreurs` tel quel (format { champ: message }). */
 export class ApiError extends Error {
+    /**
+     * @param {number} status code HTTP, 0 si le serveur est injoignable
+     * @param {Record<string, string>} erreurs
+     */
     constructor(status, erreurs) {
         super(Object.values(erreurs).join(' '));
         this.name = 'ApiError';
-        this.status = status;     // 0 = serveur injoignable
-        this.erreurs = erreurs;   // { champ: message }
+        this.status = status;
+        this.erreurs = erreurs;
     }
 }
 
@@ -54,7 +58,13 @@ async function requete(methode, chemin, corps) {
     throw new ApiError(reponse.status, erreurs);
 }
 
+// Renvoient le JSON (null si 204) ou lèvent une ApiError. chemin sans /api : '/recipes/12'.
+
+/** @param {string} chemin @returns {Promise<unknown>} */
 export const get = (chemin) => requete('GET', chemin);
+/** @param {string} chemin @param {object} [corps] @returns {Promise<unknown>} */
 export const post = (chemin, corps) => requete('POST', chemin, corps ?? {});
+/** @param {string} chemin @param {object} [corps] @returns {Promise<unknown>} */
 export const put = (chemin, corps) => requete('PUT', chemin, corps ?? {});
+/** @param {string} chemin @returns {Promise<unknown>} */
 export const supprimer = (chemin) => requete('DELETE', chemin);
