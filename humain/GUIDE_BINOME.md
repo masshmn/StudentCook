@@ -16,7 +16,7 @@
 5. **Vérification** : tester manuellement tous les critères de `TESTS.md` concernés
 6. **Pull request** : le pilote ouvre la PR, le relecteur relit avec `REVUE_CRITIQUE.md`
 7. **Merge** : après validation, merge sur `main`
-8. **Journal** : ajouter une entrée dans `JOURNAL_PROMPTS.md` si l'IA a été utilisée
+8. **Journal** : une ligne au tableau de suivi de `JOURNAL_PROMPTS.md` par session IA (+ une entrée détaillée si c'est une issue)
 
 ## Format des commits
 ```

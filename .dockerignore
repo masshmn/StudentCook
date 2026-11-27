@@ -1,0 +1,5 @@
+# Base locale : jamais dans l'image (elle vit dans le volume db-data).
+database/data/
+.git
+.claude
+.DS_Store

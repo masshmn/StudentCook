@@ -115,8 +115,7 @@ button.puce[aria-pressed="true"]::before {
     list-style: none;
 }
 
-/* ---------- Choix (budget, temps) et segments (Jour/Semaine/Mois) ---------- */
-.choix-groupe,
+/* ---------- Segments : choix budget/temps et Jour/Semaine/Mois ---------- */
 .segments {
     display: inline-flex;
     flex-wrap: wrap;
@@ -126,7 +125,6 @@ button.puce[aria-pressed="true"]::before {
     overflow: hidden;
 }
 
-.choix-groupe > button,
 .segments > button {
     min-height: 2.25rem;
     padding: var(--espace-1) var(--espace-3);
@@ -139,12 +137,10 @@ button.puce[aria-pressed="true"]::before {
     cursor: pointer;
 }
 
-.choix-groupe > button:last-child,
 .segments > button:last-child {
     border-right: none;
 }
 
-.choix-groupe > button[aria-pressed="true"],
 .segments > button[aria-pressed="true"] {
     background: var(--encre);
     color: var(--papier);
@@ -467,7 +463,6 @@ button.puce[aria-pressed="true"]::before {
 .rayon[data-rayon="Frais"] { border-left-color: var(--rayon-frais); }
 .rayon[data-rayon="Surgelés"] { border-left-color: var(--rayon-surgeles); }
 .rayon[data-rayon="Viandes & Poissons"] { border-left-color: var(--rayon-viandes-poissons); }
-.rayon[data-rayon="Autres"] { border-left-color: var(--rayon-autres); }
 
 .rayon__titre {
     margin: 0 0 var(--espace-2);
@@ -604,6 +599,11 @@ textarea:focus-visible {
     border-color: var(--erreur);
     background: var(--erreur-fond);
     color: var(--erreur);
+}
+
+.notification > p,
+.notification > ul {
+    margin: 0;
 }
 
 .etat-vide {

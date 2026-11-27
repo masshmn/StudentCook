@@ -4,9 +4,10 @@
 
 ### Workflow
 1. **Avant de coder** : propose un plan couche par couche (fichiers à créer/modifier) et **attends validation**.
-2. **Pendant le code** : après chaque fichier PHP, lance `php -l <fichier>` pour vérifier la syntaxe.
+2. **Pendant le code** : après chaque fichier PHP, lance `php -l <fichier>` ; après chaque fichier JS, `node --check <fichier>`. Respecte la section « Règles de code » d'AGENTS.md.
 3. **Après le code** : vérifie que les critères d'acceptation de `docs/SPEC.md` sont respectés.
 4. **Vérification finale** : consulte `docs/TESTS.md` et indique quels cas de test doivent être vérifiés manuellement.
+5. **Fin de session** (chaque session Claude du projet, quelle que soit la branche) : ajoute une ligne au « Tableau de suivi des sessions » de `humain/JOURNAL_PROMPTS.md` (date · session · branche · intention · prompt clé · verdict · ce qu'on a corrigé). Ajoute une « Entrée #n » détaillée seulement pour une issue ou une décision. Ce fichier est local (non versionné) : ne le commite pas.
 
 ### Fichiers de référence
 - **AGENTS.md** : contexte principal (stack, archi, règles, pièges)

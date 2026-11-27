@@ -1,5 +1,5 @@
 // Routeur par hash : #/recettes, #/recettes/12… Affiche la vue sans rechargement.
-import { afficherErreurs, vider } from './dom.js';
+import { afficherErreurs } from './dom.js';
 
 const ENTIER_POSITIF = /^[1-9][0-9]*$/;
 
@@ -41,9 +41,8 @@ function correspondre(motif, segments) {
 function marquerLienActif(premierSegment) {
     document.querySelectorAll('nav a[href^="#/"]').forEach((lien) => {
         const segmentLien = lien.getAttribute('href').replace(/^#\//, '').split('/')[0];
-        const actif = premierSegment !== null && segmentLien === premierSegment;
-        lien.classList.toggle('actif', actif);
-        if (actif) {
+        // aria-current est la seule marque de l'état actif (le CSS s'appuie dessus).
+        if (premierSegment !== null && segmentLien === premierSegment) {
             lien.setAttribute('aria-current', 'page');
         } else {
             lien.removeAttribute('aria-current');
@@ -78,16 +77,20 @@ export function demarrerRouteur({ conteneur, routes, vueIntrouvable, routeParDef
             }
         }
 
-        // Page introuvable : aucun lien allumé.
-        marquerLienActif(vue === vueIntrouvable ? null : segments[0]);
-        vider(conteneur);
+        marquerLienActif(vue === vueIntrouvable ? null : (segments?.[0] ?? null));
+
+        // Chaque navigation a sa propre zone : si l'écran change pendant qu'une vue attend
+        // une réponse de l'API, cette vue écrit dans une zone déjà retirée (rien ne s'affiche).
+        const zone = document.createElement('div');
+        zone.className = 'zone-vue';
+        conteneur.replaceChildren(zone);
         window.scrollTo(0, 0);
 
         try {
-            await vue.afficher(conteneur, params);
+            await vue.afficher(zone, params);
         } catch (erreur) {
             console.error(erreur);
-            afficherErreurs(conteneur, { vue: "Impossible d'afficher cet écran." });
+            afficherErreurs(zone, { vue: "Impossible d'afficher cet écran." });
         }
     }
 

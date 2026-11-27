@@ -76,7 +76,7 @@ Regrouper dans `<ul class="liste-puces">`. L'état d'un filtre passe par `aria-p
 <div class="barre-filtres">
   <div class="barre-filtres__groupe">
     <span class="barre-filtres__titre">Budget / portion</span>
-    <div class="choix-groupe" role="group" aria-label="Budget par portion">
+    <div class="segments" role="group" aria-label="Budget par portion">
       <button aria-pressed="true">Tous</button>
       <button aria-pressed="false">≤ 2 €</button>
     </div>
@@ -223,7 +223,7 @@ Le bouton − est `disabled` à 1.
 </form>
 ```
 
-Les erreurs sont posées par `afficherErreursChamps()` (`.erreur-champ` + `aria-invalid` + `aria-describedby`) et `afficherErreurs()` (`.bandeau-erreur`, `role="alert"`).
+Les erreurs sont posées par `afficherErreursChamps()` (`.erreur-champ` + `aria-invalid` + `aria-describedby`) et `afficherErreurs()` (`.notification--erreur`, `role="alert"`).
 
 ### Notifications et état vide
 
