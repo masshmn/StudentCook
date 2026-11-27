@@ -330,7 +330,7 @@ INSERT INTO recipe_steps (recipe_id, step_number, description) VALUES
     (15, 2, 'Cuire les filets de colin à la poêle avec le beurre.'),
     (15, 3, 'Servir avec le jus du citron.'),
 
-    (16, 1, 'Préparer 75 cL de bouillon avec les bouillons cubes.'),
+    (16, 1, 'Préparer le bouillon avec les bouillons cubes et de l''eau chaude.'),
     (16, 2, 'Faire revenir l''oignon et les champignons dans le beurre, ajouter le riz.'),
     (16, 3, 'Déglacer au vin blanc, puis ajouter le bouillon louche par louche en remuant.'),
     (16, 4, 'Hors du feu, ajouter le parmesan.'),
