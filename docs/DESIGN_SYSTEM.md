@@ -18,7 +18,7 @@
 |---|---|---|
 | `--papier` | `#F6F3EC` | Fond de page |
 | `--papier-fonce` | `#ECE7DB` | En-têtes de tableau, jours hors mois |
-| `--carte` | `#FFFDF8` | Fond des boîtes, champs, lignes |
+| `--carte` | `#FFFFFF` | Fond des boîtes, champs, lignes |
 | `--encre` | `#171512` | Texte, bordures, bouton principal |
 | `--encre-douce` | `#5C574F` | Texte secondaire (6,46:1 sur papier) |
 | `--trait-doux` | `#D9D2C3` | Séparateurs internes, créneaux vides |
@@ -35,9 +35,9 @@
 - Polices : `--police-titre`, `--police-texte`, `--police-chiffres` (monospace pour prix et quantités).
 - Tailles : `--texte-xs` (0,75 rem) → `--texte-xxl` (2,25 rem).
 - Espacements : `--espace-1` (4 px) → `--espace-7` (48 px).
-- Formes : `--rayon-s|m|l|rond`, `--bordure`, `--bordure-douce`, `--ombre`, `--focus`.
-- Mise en page : `--largeur-barre` (220 px), `--largeur-contenu` (960 px).
-- **Point de rupture unique : 760 px** (répété en dur dans les `@media`, les variables CSS n'y sont pas lues).
+- Formes : `--rayon-s|m|l|rond`, `--bordure`, `--bordure-douce`, `--bordure-fine` (1 px), `--ombre`, `--focus` (redéfini en beurre dans la barre sombre).
+- Mise en page : `--largeur-barre` (168 px), `--largeur-contenu` (960 px), `--largeur-contenu-large` (1280 px, écrans ≥ 1440 px).
+- **Points de rupture : 760 px** (mobile ; répété en dur dans les `@media` et dans `views/ingredientsView.js` pour l'état replié par défaut) **et 1440 px** (très grand écran : contenu élargi, 3 colonnes de cartes). Les variables CSS ne sont pas lues dans les `@media`.
 
 ### Polices
 
@@ -206,6 +206,35 @@ Le bouton − est `disabled` à 1.
 
 `data-rayon` reprend **exactement** la valeur `aisle` de la base (valeurs fixées par le `CHECK`) : la couleur du liseré en découle, sans table de correspondance en JS. Un article coché est barré.
 
+La couleur est définie une seule fois : tout élément `[data-rayon]` reçoit `--couleur-rayon`, héritée par ses enfants (liseré `.rayon`, pastille `.pastille-rayon`). Rayon inconnu : `--rayon-autres`.
+
+### Référentiel d'ingrédients : carte de rayon et tableau
+
+```html
+<div class="grille-rayons">  <!-- 3 colonnes ≥ 1440 px, 2 sur ordinateur, 1 sur mobile -->
+<section class="boite" data-rayon="Épicerie" aria-labelledby="titre-rayon-2">
+  <details open>
+  <summary class="carte-rayon__entete">
+    <h2 class="carte-rayon__titre" id="titre-rayon-2">
+      <span class="pastille-rayon" aria-hidden="true"></span>Épicerie
+    </h2>
+    <span class="carte-rayon__compteur">7 ingrédients</span>
+  </summary>
+  <table class="tableau" aria-labelledby="titre-rayon-2">
+    <thead><tr><th scope="col">Nom</th><th scope="col" class="tableau__nombre">Prix</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">Riz</th><td class="tableau__nombre">1,90 € / kg</td></tr>
+    </tbody>
+  </table>
+  </details>
+</section>
+</div>
+```
+
+- Carte repliable : `<details>` natif (clic, Entrée ou Espace sur l'en-tête), chevron ▾ / ▸. Par défaut : **ouverte sur ordinateur, repliée sur mobile** (≤ 760 px, lu une fois à l'affichage).
+
+`.tableau` est générique (en-tête en capitales sur trait épais, lignes séparées par `--bordure-fine`) ; `.tableau__nombre` aligne à droite, avec des chiffres à chasse fixe (`tabular-nums`) plutôt que `--police-chiffres`, trop large pour les cartes. Sous un `h1`, `.sous-titre` donne le compteur ou le contexte de l'écran.
+
 ### Formulaires
 
 ```html
@@ -243,7 +272,8 @@ Les erreurs sont posées par `afficherErreursChamps()` (`.erreur-champ` + `aria-
 ## 4. Accessibilité
 
 - **Contraste** (vérifié, WCAG AA ≥ 4,5:1) : encre/papier 16,4 · encre-douce/papier 6,5 · tomate-fonce/papier 5,6 · encre/tomate 4,6 · encre/beurre 12,9 · erreur/erreur-fond 6,0. **Blanc sur tomate = 3,95 : interdit** (d'où le texte encre sur `bouton--tomate`).
-- **Focus** : contour `--focus` (3 px tomate foncé) sur liens, boutons et champs ; ne jamais le supprimer.
+- **Focus** : contour `--focus` (3 px tomate foncé) sur liens, boutons et champs ; ne jamais le supprimer. Dans la barre sombre, contour beurre (tomate foncé illisible sur encre).
+- **Barre sombre** (vérifié) : papier/encre 16,4 · tomate/encre 4,6 (logo) · beurre/encre 12,9 (focus).
 - **États** : `aria-pressed` pour les boutons bascule, `aria-current="page"` pour le menu (posé par `router.js`), `aria-current="date"` pour aujourd'hui.
 - **Couleur jamais seule** : un régime a toujours son libellé, un rayon son titre.
 - **Sécurité** : toute donnée affichée passe par `textContent` / `el()` ; jamais `innerHTML`.
@@ -253,8 +283,9 @@ Les erreurs sont posées par `afficherErreursChamps()` (`.erreur-champ` + `aria-
 
 | Largeur | Navigation | Contenu |
 |---|---|---|
-| > 760 px | Barre latérale fixe à gauche (`.entete`), logo + menu vertical | 960 px max |
-| ≤ 760 px | Barre flottante en bas, menu horizontal, logo masqué | Marge basse de 6 rem ; tableau du planning défilant horizontalement |
+| ≥ 1440 px | Comme ordinateur | 1280 px max ; 3 colonnes de cartes de rayon |
+| > 760 px | Barre latérale fixe à gauche (`.entete`), fond encre, logo « student**cook** » (`.logo__accent` en tomate) + menu vertical, lien actif sur fond tomate (texte encre) | 960 px max |
+| ≤ 760 px | Barre flottante sombre en bas, menu horizontal, logo masqué | Marge basse de 6 rem ; tableau du planning défilant horizontalement |
 
 La structure `header.entete > nav > ul.menu` est la même dans les deux cas, seul le CSS change.
 

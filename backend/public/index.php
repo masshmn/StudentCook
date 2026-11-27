@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use StudentCook\Domain\Exceptions\AppException;
 use StudentCook\Http\Controllers\ErrorController;
+use StudentCook\Http\Controllers\IngredientController;
 
 require dirname(__DIR__) . '/bootstrap.php';
 
@@ -14,6 +15,7 @@ require dirname(__DIR__) . '/bootstrap.php';
  * Exemple : ['GET', '/api/recipes/{id}', RecipeController::class, 'show'],
  */
 const API_ROUTES = [
+    ['GET', '/api/ingredients', IngredientController::class, 'index'],
 ];
 
 const JSON_BODY_METHODS = ['POST', 'PUT', 'PATCH'];
@@ -22,6 +24,7 @@ const STATIC_MIME_TYPES = [
     'html' => 'text/html; charset=utf-8',
     'css'  => 'text/css; charset=utf-8',
     'js'   => 'text/javascript; charset=utf-8',
+    'woff2' => 'font/woff2', // polices locales prévues par D8
 ];
 
 function routePatternToRegex(string $routePath): string
@@ -76,6 +79,14 @@ function dispatchApi(string $httpMethod, string $requestPath): void
 function serveFrontend(string $requestPath): void
 {
     $frontendRoot = realpath(dirname(__DIR__, 2) . '/frontend');
+    // Dossier absent (montage raté) : false deviendrait le préfixe « / » et ouvrirait tout le disque.
+    if ($frontendRoot === false) {
+        error_log('Dossier frontend/ introuvable.');
+        http_response_code(500);
+        header('Content-Type: text/plain; charset=utf-8');
+        echo 'Erreur interne du serveur.';
+        return;
+    }
     $relativePath = ltrim($requestPath, '/');
     // Un octet NUL (%00) ferait lever une ValueError à realpath() : 404 directement.
     $requestedFile = str_contains($relativePath, "\0")
@@ -100,7 +111,10 @@ function serveFrontend(string $requestPath): void
 }
 
 $httpMethod = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
-$requestPath = rawurldecode(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/');
+// Pas de parse_url() : il lit « //api/x » comme un nom d'hôte et perd « /api ».
+// Les « / » répétés sont fusionnés pour que « //api/x » reste une requête API (réponse JSON).
+$requestUri = explode('?', $_SERVER['REQUEST_URI'] ?? '/', 2)[0];
+$requestPath = preg_replace('#/{2,}#', '/', rawurldecode($requestUri === '' ? '/' : $requestUri));
 $isApiRequest = $requestPath === '/api' || str_starts_with($requestPath, '/api/');
 
 // Erreur fatale (hors exception) : réponse JSON générique au lieu d'une page vide.

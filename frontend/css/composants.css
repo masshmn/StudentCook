@@ -451,18 +451,21 @@ button.puce[aria-pressed="true"]::before {
 }
 
 /* ---------- Liste de courses ---------- */
+/*
+ * Couleur d'un rayon : posée une seule fois sur tout élément [data-rayon] et héritée
+ * (liseré .rayon, pastille .pastille-rayon). Valeurs fixées par le CHECK de la table ingredients.
+ */
+[data-rayon="Fruits & Légumes"] { --couleur-rayon: var(--rayon-fruits-legumes); }
+[data-rayon="Épicerie"] { --couleur-rayon: var(--rayon-epicerie); }
+[data-rayon="Frais"] { --couleur-rayon: var(--rayon-frais); }
+[data-rayon="Surgelés"] { --couleur-rayon: var(--rayon-surgeles); }
+[data-rayon="Viandes & Poissons"] { --couleur-rayon: var(--rayon-viandes-poissons); }
+
 .rayon {
     margin-bottom: var(--espace-5);
     padding-left: var(--espace-3);
-    border-left: 6px solid var(--rayon-autres);
+    border-left: 6px solid var(--couleur-rayon, var(--rayon-autres));
 }
-
-/* Valeurs fixées par le CHECK de la table ingredients */
-.rayon[data-rayon="Fruits & Légumes"] { border-left-color: var(--rayon-fruits-legumes); }
-.rayon[data-rayon="Épicerie"] { border-left-color: var(--rayon-epicerie); }
-.rayon[data-rayon="Frais"] { border-left-color: var(--rayon-frais); }
-.rayon[data-rayon="Surgelés"] { border-left-color: var(--rayon-surgeles); }
-.rayon[data-rayon="Viandes & Poissons"] { border-left-color: var(--rayon-viandes-poissons); }
 
 .rayon__titre {
     margin: 0 0 var(--espace-2);
@@ -514,6 +517,117 @@ button.puce[aria-pressed="true"]::before {
 .article:has(input:checked) .article__nom {
     text-decoration: line-through;
     color: var(--encre-douce);
+}
+
+/* ---------- Carte de rayon (référentiel d'ingrédients) ---------- */
+/*
+ * 2 colonnes sur ordinateur, 3 sur très grand écran, 1 sur mobile (@media en fin de fichier).
+ * align-items: start : une carte repliée ne s'étire pas à la hauteur de sa voisine.
+ * Un seul pas (--espace-4) pour l'écart entre cartes, leur marge intérieure (.boite)
+ * et l'espace sous l'en-tête : le blanc paraît égal partout.
+ */
+.grille-rayons {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: var(--espace-4);
+}
+
+/* L'en-tête est le <summary> d'un <details> : clic ou Entrée pour replier le rayon */
+.carte-rayon__entete {
+    display: flex;
+    align-items: center;
+    gap: var(--espace-2);
+    list-style: none;
+    cursor: pointer;
+}
+
+.carte-rayon__entete::-webkit-details-marker {
+    display: none;
+}
+
+.carte-rayon__entete:focus-visible {
+    border-radius: var(--rayon-s);
+}
+
+details[open] > .carte-rayon__entete {
+    margin-bottom: var(--espace-4);
+}
+
+/* Chevron : ▾ ouvert, ▸ replié (caractère, donc couleur du texte) */
+.carte-rayon__entete::after {
+    content: "▾";
+    color: var(--encre-douce);
+    transition: transform 0.15s ease;
+}
+
+details:not([open]) > .carte-rayon__entete::after {
+    transform: rotate(-90deg);
+}
+
+.carte-rayon__titre {
+    display: flex;
+    align-items: center;
+    gap: var(--espace-2);
+    margin: 0;
+    font-size: var(--texte-m);
+    font-weight: 800;
+}
+
+.carte-rayon__compteur {
+    margin-left: auto;
+    color: var(--encre-douce);
+    font-size: var(--texte-xs);
+}
+
+/* Couleur jamais seule : la pastille accompagne toujours le titre du rayon */
+.pastille-rayon {
+    flex-shrink: 0;
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: var(--rayon-rond);
+    background: var(--couleur-rayon, var(--rayon-autres));
+}
+
+/* ---------- Tableau de données ---------- */
+.tableau {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--texte-s);
+}
+
+/* Pas de marge latérale : le texte s'aligne sur le bord intérieur de la carte */
+.tableau th,
+.tableau td {
+    padding: var(--espace-3) 0;
+    text-align: left;
+}
+
+.tableau thead th {
+    padding-top: 0;
+    border-bottom: var(--bordure);
+    color: var(--encre-douce);
+    font-size: var(--texte-xs);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+/* Aucun trait sous la dernière ligne : bas de carte net */
+.tableau tbody > tr:not(:last-child) > * {
+    border-bottom: var(--bordure-fine);
+}
+
+.tableau tbody th {
+    font-weight: 600;
+}
+
+/* Chiffres à chasse fixe sans police monospace : plus étroit dans les cartes (maquette) */
+.tableau__nombre {
+    padding-left: var(--espace-4);
+    text-align: right;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
 }
 
 /* ---------- Formulaires ---------- */
@@ -653,10 +767,21 @@ textarea:focus-visible {
     .calendrier__jour {
         min-height: 4rem;
     }
+
+    .grille-rayons {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (min-width: 1440px) {
+    .grille-rayons {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .bouton {
+    .bouton,
+    .carte-rayon__entete::after {
         transition: none;
     }
 }

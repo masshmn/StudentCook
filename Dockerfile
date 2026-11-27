@@ -1,7 +1,7 @@
 FROM php:8.3-cli
 
 # pdo_sqlite est déjà compilé dans l'image officielle : aucune extension à installer.
-ENV TZ=Europe/Paris
+# Pas de TZ ici : le fuseau est fixé à un seul endroit, backend/bootstrap.php.
 
 WORKDIR /app
 COPY backend/ backend/

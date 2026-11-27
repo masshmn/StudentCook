@@ -24,7 +24,7 @@
     /* Couleurs de base */
     --papier: #F6F3EC;
     --papier-fonce: #ECE7DB;
-    --carte: #FFFDF8;
+    --carte: #FFFFFF;
     --encre: #171512;
     --encre-douce: #5C574F;      /* texte secondaire, contraste ≥ 4,5:1 sur papier */
     --trait: #171512;            /* bordures « cahier » */
@@ -47,12 +47,12 @@
     --regime-halal: #C9DDF2;
 
     /* Rayons (pastille / liseré) */
-    --rayon-fruits-legumes: #7DBF6A;
-    --rayon-epicerie: #E0A84A;
-    --rayon-frais: #6FAFD8;
-    --rayon-surgeles: #A9C7E8;
-    --rayon-viandes-poissons: #E07A6A;
-    --rayon-autres: #B7AFA2;
+    --rayon-fruits-legumes: #E0492F;
+    --rayon-epicerie: #D9B24C;
+    --rayon-frais: #5E9E3F;
+    --rayon-surgeles: #6A9BD8;
+    --rayon-viandes-poissons: #8E2A1E;
+    --rayon-autres: #8C8780;
 
     /* Typographie */
     --police-titre: "Bricolage Grotesque", ui-rounded, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -82,13 +82,16 @@
     --rayon-rond: 999px;
     --bordure: 1.5px solid var(--trait);
     --bordure-douce: 1.5px solid var(--trait-doux);
+    --bordure-fine: 1px solid var(--trait-doux);   /* lignes serrées d'un tableau */
     --ombre: 3px 3px 0 var(--encre);   /* ombre « décalée » façon cahier */
 
     --focus: 3px solid var(--tomate-fonce);
 
     /* Mise en page */
-    --largeur-barre: 220px;
+    --largeur-barre: 168px;
     --largeur-contenu: 960px;
-    /* Point de rupture unique : 760px (les media queries ne lisent pas les variables,
-       la valeur est répétée dans composants.css et style.css). */
+    --largeur-contenu-large: 1280px;   /* écrans ≥ 1440px : place pour 3 colonnes de cartes */
+    /* Points de rupture : 760px (mobile) et 1440px (très grand écran). Les media queries
+       ne lisent pas les variables : 760px est répété dans composants.css, style.css et
+       views/ingredientsView.js ; 1440px dans composants.css et style.css. */
 }

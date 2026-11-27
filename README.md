@@ -15,6 +15,7 @@ docker compose up --build
 Puis ouvrir http://localhost:8000.
 
 - Au démarrage, `database/init.php` initialise la base. **S'il échoue, le conteneur s'arrête** (voir les logs : `docker compose logs app`).
+- Une base créée avec un ancien schéma est refusée (version dans `PRAGMA user_version`) : la recréer avec `docker compose run --rm app php database/init.php --reset`.
 - Le code (`backend/`, `frontend/`, `database/`) est monté dans le conteneur : une modification est visible au rechargement de la page, sans rebuild.
 - La base SQLite est stockée dans le volume Docker `db-data` (`database/data/student_cook.db`), jamais dans le dépôt.
 

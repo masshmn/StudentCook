@@ -17,6 +17,10 @@ use StudentCook\Infrastructure\Database;
 
 require dirname(__DIR__) . '/backend/bootstrap.php';
 
+// Version du schéma, écrite dans PRAGMA user_version. À incrémenter à chaque modification
+// de schema.sql : une base plus ancienne est alors refusée au lieu de provoquer des 500.
+const SCHEMA_VERSION = 1;
+
 $isReset = in_array('--reset', array_slice($argv, 1), true);
 $databasePath = Database::getPath();
 
@@ -44,6 +48,14 @@ try {
         "SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name = 'recipes'"
     )->fetchColumn();
     if ($tableCount > 0) {
+        $databaseVersion = (int) $pdo->query('PRAGMA user_version')->fetchColumn();
+        if ($databaseVersion < SCHEMA_VERSION) {
+            throw new RuntimeException(
+                "base créée avec un ancien schéma (version $databaseVersion, attendue " . SCHEMA_VERSION . ').'
+                . " Recréez-la : php database/init.php --reset"
+                . ' (Docker : docker compose run --rm app php database/init.php --reset).'
+            );
+        }
         echo "Base déjà initialisée : rien à faire ($databasePath).\n";
         echo "Pour la recréer depuis le seed : php database/init.php --reset\n";
         exit(0);
@@ -58,13 +70,15 @@ try {
         }
         $pdo->exec($sql);
     }
-    $pdo->commit();
 
-    // Filet de sécurité : le seed ne doit référencer aucun id inexistant.
+    // Avant le commit, pour que l'erreur annule tout : le seed ne doit référencer aucun id inexistant.
     $foreignKeyErrors = $pdo->query('PRAGMA foreign_key_check')->fetchAll();
     if ($foreignKeyErrors !== []) {
         throw new RuntimeException('le seed contient des références invalides (PRAGMA foreign_key_check).');
     }
+
+    $pdo->exec('PRAGMA user_version = ' . SCHEMA_VERSION);
+    $pdo->commit();
 
     $ingredientCount = (int) $pdo->query('SELECT COUNT(*) FROM ingredients')->fetchColumn();
     $recipeCount = (int) $pdo->query('SELECT COUNT(*) FROM recipes')->fetchColumn();

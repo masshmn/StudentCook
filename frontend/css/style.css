@@ -30,12 +30,14 @@ h3 {
 
 h1 {
     margin-top: 0;
-    font-size: var(--texte-xxl);
+    font-size: var(--texte-xl);
     font-weight: 800;
+    line-height: 1.02;
+    letter-spacing: -0.03em;
 }
 
 h2 {
-    font-size: var(--texte-xl);
+    font-size: var(--texte-l);
 }
 
 a {
@@ -43,30 +45,40 @@ a {
 }
 
 a:focus-visible,
-button:focus-visible {
+button:focus-visible,
+summary:focus-visible {
     outline: var(--focus);
     outline-offset: 2px;
 }
 
-/* ---------- Mise en page : barre latérale (ordinateur) ---------- */
+/* ---------- Mise en page : barre latérale sombre (ordinateur) ---------- */
 .entete {
     position: sticky;
     top: 0;
     display: flex;
     flex-direction: column;
-    gap: var(--espace-5);
+    gap: var(--espace-4);
     height: 100vh;
-    padding: var(--espace-5) var(--espace-4);
-    border-right: var(--bordure);
-    background: var(--papier);
+    padding: var(--espace-4) var(--espace-3);
+    background: var(--encre);
+    color: var(--papier);
+    /* Le focus tomate foncé est illisible sur fond encre : tout ce qui est focalisable
+       dans la barre hérite d'un contour beurre */
+    --focus: 3px solid var(--beurre);
 }
 
 .logo {
     font-family: var(--police-titre);
     font-size: var(--texte-l);
     font-weight: 800;
-    color: var(--encre);
+    letter-spacing: -0.03em;
+    color: var(--papier);
     text-decoration: none;
+}
+
+/* Contraste tomate / encre vérifié dans DESIGN_SYSTEM.md (§ Accessibilité) */
+.logo__accent {
+    color: var(--tomate);
 }
 
 .menu {
@@ -81,24 +93,25 @@ button:focus-visible {
 .menu a {
     display: flex;
     align-items: center;
-    gap: var(--espace-3);
-    padding: var(--espace-2) var(--espace-3);
+    gap: var(--espace-2);
+    padding: var(--espace-2);
     border: 1.5px solid transparent;
     border-radius: var(--rayon-m);
-    color: var(--encre);
+    color: var(--papier);
+    font-size: var(--texte-s);
     font-weight: 600;
     text-decoration: none;
 }
 
 .menu a:hover {
-    border-color: var(--trait);
+    border-color: var(--encre-douce);
 }
 
 /* Icône SVG du menu : trait de la couleur du texte (suit l'état actif) */
 .menu__icone {
     flex: none;
-    width: 1.375rem;
-    height: 1.375rem;
+    width: 1.125rem;
+    height: 1.125rem;
     fill: none;
     stroke: currentColor;
     stroke-width: 1.8;
@@ -106,21 +119,34 @@ button:focus-visible {
     stroke-linejoin: round;
 }
 
+/* Texte encre sur tomate (le blanc sur tomate est interdit : 3,95:1) */
 .menu a[aria-current="page"] {
-    border-color: var(--trait);
-    background: var(--encre);
-    color: var(--papier);
+    border-color: var(--tomate);
+    background: var(--tomate);
+    color: var(--encre);
 }
 
 main {
     width: 100%;
     max-width: var(--largeur-contenu);
-    padding: var(--espace-6) var(--espace-5);
+    padding: var(--espace-5);
 }
 
 .a-venir {
     color: var(--encre-douce);
     font-style: italic;
+}
+
+/* Ligne sous le h1 d'un écran (compteur, rappel du contexte) */
+h1:has(+ .sous-titre) {
+    margin-bottom: var(--espace-2);
+}
+
+.sous-titre {
+    margin: 0 0 var(--espace-4);
+    color: var(--encre-douce);
+    font-size: var(--texte-s);
+    font-weight: 600;
 }
 
 
@@ -132,6 +158,13 @@ main {
 
 [aria-invalid="true"] {
     border-color: var(--erreur);
+}
+
+/* ---------- Très grand écran : contenu plus large ---------- */
+@media (min-width: 1440px) {
+    main {
+        max-width: var(--largeur-contenu-large);
+    }
 }
 
 /* ---------- Mobile : barre flottante en bas ---------- */
@@ -149,10 +182,8 @@ main {
         z-index: 10;
         height: auto;
         padding: var(--espace-1);
-        border: var(--bordure);
         border-radius: var(--rayon-l);
         box-shadow: var(--ombre);
-        background: var(--carte);
     }
 
     .logo {
@@ -188,9 +219,5 @@ main {
     main {
         /* place pour la barre flottante */
         padding: var(--espace-5) var(--espace-4) 6rem;
-    }
-
-    h1 {
-        font-size: var(--texte-xl);
     }
 }
