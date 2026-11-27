@@ -69,6 +69,7 @@ INSERT INTO ingredients (name, aisle, price_per_unit, unit) VALUES
 -- ===========================================================================
 -- Recettes
 -- Colonnes : id, nom, temps (min), portions, végétarien, végan, sans gluten, halal
+-- Drapeaux déclaratifs : le fromage (parmesan, emmental, pesto) compte comme végétarien et halal (D9).
 -- ===========================================================================
 INSERT INTO recipes (id, name, prep_time, servings, is_vegetarian, is_vegan, is_gluten_free, is_halal) VALUES
     ( 1, 'Pâtes au pesto',                          15, 1, 1, 0, 0, 1),

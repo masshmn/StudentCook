@@ -58,3 +58,10 @@
 **Raison** : Identité visuelle cohérente sur les 4 écrans, sans dépendance ni build ; une seule source de vérité pour les couleurs.
 **Polices** : système par défaut ; Bricolage Grotesque et DM Sans (OFL) prévues en fichiers locaux, jamais via Google Fonts (pas d'appel réseau externe).
 **Écarté** : Framework CSS (Tailwind, Bootstrap), préprocesseur (Sass), polices en ligne.
+
+## D9 — Fromages et drapeaux de régime (28/11/2026)
+
+**Choix** : Une recette avec du fromage (parmesan, emmental, pesto) peut être marquée végétarienne et halal. Les drapeaux restent **déclaratifs** (D2) : la présure n'est pas vérifiée.
+**Raison** : Convention courante en France ; retirer ces drapeaux viderait une grande partie du filtre végétarien du seed (recettes 1, 4, 10, 16, 22) et casserait les pré-requis de CN2.
+**Limite assumée** : Le parmigiano et beaucoup d'emmentals sont faits avec de la présure animale ; un végétarien ou un mangeur halal strict doit vérifier l'étiquette. Vérification automatique ou certification : hors périmètre (SPEC, section 3).
+**Écarté** : Retirer les drapeaux des recettes au fromage ; ajouter des ingrédients « fromage végétarien » (création d'ingrédient hors périmètre, D1).

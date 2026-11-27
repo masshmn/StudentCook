@@ -21,7 +21,14 @@ final class ErrorController extends AbstractController
 
     public function appError(AppException $exception): void
     {
-        $status = self::STATUS_BY_EXCEPTION[$exception::class] ?? null;
+        $status = null;
+        // instanceof : une sous-classe (ex. d'une ValidationException) hérite du code de sa mère.
+        foreach (self::STATUS_BY_EXCEPTION as $exceptionClass => $exceptionStatus) {
+            if ($exception instanceof $exceptionClass) {
+                $status = $exceptionStatus;
+                break;
+            }
+        }
         if ($status === null) {
             // Exception métier oubliée dans la table : bug à corriger, pas un message pour le client.
             error_log('Exception métier sans code HTTP : ' . $exception::class);
